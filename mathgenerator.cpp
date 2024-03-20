@@ -1,8 +1,10 @@
-#include "mathgenerator.hpp"
+#include "mathgenerator.h"
 #include <cmath>
 #include <cstdlib>
 #include <string>
 #include <vector>
+
+#pragma once
 
 const int TOTAL_QUESTIONS = 4;
 

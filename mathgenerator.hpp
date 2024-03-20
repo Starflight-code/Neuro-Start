@@ -1,8 +1,10 @@
-#ifndef _MATH_GENERATOR_HPP
-#define _MATH_GENERATOR_HPP
+// #ifndef _MATH_GENERATOR_HPP
+// #define _MATH_GENERATOR_HPP
+#pragma once
 
 #include <string>
 #include <vector>
+
 namespace puzzleGeneration {
     class mathGenerator;
 }
@@ -81,4 +83,4 @@ public:
     static questions generateQuestion(difficulty level);
 };
 
-#endif
+// #endif
