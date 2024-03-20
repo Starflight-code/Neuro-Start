@@ -16,7 +16,7 @@ struct questions {
         this->answers.push_back(answers);
     }
 
-    void addQuestion(std::string question, std::vector<std::string> answers) {
+    void addQuestion(std::string question, std::vector<std::string> answers) { // TODO: Verify this way of copying the vectors doesn't cause a segfault or undefined behavior
         this->questionsAsked.push_back(question);
         this->answers.push_back(answers);
     }
@@ -111,8 +111,10 @@ questions generateQuestion(difficulty level) {
                 questionToAsk = "Resolve the following: " + std::to_string(number1) + " + " + std::to_string(number2);
         }
         answers.push_back(std::to_string(answer));
+
         for(int j = 0; j < TOTAL_QUESTIONS - 1; j++) {
-            answers.push_back(std::to_string((answer + (rand() % (int)std::pow(10, maxDigits))) % (int)std::pow(10, maxDigits)));
+            int randomAnswer = (answer + (rand() % (int)std::pow(10, maxDigits))) % (int)std::pow(10, maxDigits); // generates a randomized alternative (wrong) answer for the user to not select after solving
+            answers.push_back(std::to_string(randomAnswer == answer ? ++randomAnswer : randomAnswer));            // verifies the wrong answer is not correct, if this edge case occurs then add one (making it rightfully wrong)
         }
         returnValue.addQuestion(questionToAsk, answers);
         answers.clear();
