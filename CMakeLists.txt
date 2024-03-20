@@ -18,6 +18,13 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
 )
+add_executable(mathgen tests/mathgen.cpp)
+
+enable_testing()
+add_test(multiplicationGen mathgen 0)
+add_test(divisionGen mathgen 1)
+add_test(additionGen mathgen 2)
+add_test(subtractionGen mathgen 3)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Neuro-Start

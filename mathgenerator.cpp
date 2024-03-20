@@ -22,12 +22,87 @@ struct questions {
     }
 };
 
+enum mathOperator {
+    multiplication,
+    division,
+    addition,
+    subtraction
+};
+
+struct mathOperation {
+    int number1;
+    int number2;
+    int answer;
+    mathOperator operation;
+
+    mathOperation() {
+        number1 = 0;
+        number2 = 0;
+        answer = 0;
+        operation = multiplication;
+    }
+    mathOperation(int number1, int number2, int answer, mathOperator operation) {
+        this->number1 = number1;
+        this->number2 = number2;
+        this->answer = answer;
+        this->operation = operation;
+    }
+
+    char fetchNotation() {
+        switch(operation) {
+            case multiplication:
+                return '*';
+            case division:
+                return '/';
+            case addition:
+                return '+';
+            case subtraction:
+                return '-';
+        }
+        return '?';
+    }
+};
+
 enum difficulty {
     easy,
     moderate,
     difficult,
     extreme
 };
+
+mathOperation generateMultiplication(int maxDigits) {
+    int number1 = rand() % (int)std::pow(10, maxDigits);
+    int number2 = rand() % (int)std::pow(10, maxDigits);
+    int answer = number1 * number2;
+    return mathOperation(number1, number2, answer, multiplication);
+}
+
+mathOperation generateDivision(int maxDigits) {
+    int number1 = rand() % (int)std::pow(10, maxDigits);
+    int number2 = (rand() + 1) % (int)std::pow(10, maxDigits == 1 ? 1 : maxDigits - 1); // ensures number 2 is a smaller number from number1
+    number1 -= number1 % number2;                                                       // ensures a integer results from division
+    int answer = number1 / number2;
+    return mathOperation(number1, number2, answer, division);
+}
+
+mathOperation generateAddition(int maxDigits) {
+    int number1 = rand() % (int)std::pow(10, maxDigits);
+    int number2 = rand() % (int)std::pow(10, maxDigits);
+    int answer = number1 + number2;
+    return mathOperation(number1, number2, answer, addition);
+}
+
+mathOperation generateSubtraction(int maxDigits) {
+    int number1 = rand() % (int)std::pow(10, maxDigits);
+    int number2 = rand() % (int)std::pow(10, maxDigits);
+    if(number1 < number2) {
+        int temp = number1;
+        number1 = number2;
+        number2 = temp;
+    } // ensures the result is a positive number
+    int answer = number1 - number2;
+    return mathOperation(number1, number2, answer, subtraction);
+}
 
 questions generateQuestion(difficulty level) {
     int maxDigitsMultiplication;
@@ -72,6 +147,7 @@ questions generateQuestion(difficulty level) {
 
     int numberOfOperations = maxOperations != 0 ? rand() % (maxOperations - 1) + 1 : 1; // sets the number of operations to generate to between 1 and max operations.
     for(int i = 0; i < numberOfOperations; i++) {
+        mathOperation operation = mathOperation();
         int number1;
         int number2;
         int answer;
@@ -79,37 +155,45 @@ questions generateQuestion(difficulty level) {
 
         switch(rand() % 4) {
             case(0): // Multiplication
-                number1 = rand() % (int)std::pow(10, maxDigitsMultiplication);
-                number2 = rand() % (int)std::pow(10, maxDigitsMultiplication);
+
+                // number1 = rand() % (int)std::pow(10, maxDigitsMultiplication);
+                // number2 = rand() % (int)std::pow(10, maxDigitsMultiplication);
                 maxDigits = maxDigitsMultiplication;
-                answer = number1 * number2;
-                questionToAsk = "Resolve the following: " + std::to_string(number1) + " * " + std::to_string(number2);
+                // answer = number1 * number2;
+                operation = generateMultiplication(maxDigitsMultiplication);
                 break;
             case(1): // Division
-                number1 = rand() % (int)std::pow(10, maxDigitsDivision);
-                number2 = (rand() + 1) % (int)std::pow(10, maxDigitsDivision == 1 ? 1 : maxDigitsDivision - 1); // ensures number 2 is a smaller number from number1
-                number1 -= number1 % number2;                                                                   // ensures a integer results from division
+                // number1 = rand() % (int)std::pow(10, maxDigitsDivision);
+                // number2 = (rand() + 1) % (int)std::pow(10, maxDigitsDivision == 1 ? 1 : maxDigitsDivision - 1); // ensures number 2 is a smaller number from number1
+                // number1 -= number1 % number2;                                                                   // ensures a integer results from division
                 maxDigits = maxDigitsDivision;
-                answer = number1 / number2;
-                questionToAsk = "Resolve the following: " + std::to_string(number1) + " / " + std::to_string(number2);
+                operation = generateDivision(maxDigitsDivision);
+                // answer = number1 / number2;
+                // questionToAsk = "Resolve the following: " + std::to_string(number1) + " / " + std::to_string(number2);
+                break;
             case(2): // Addition
-                number1 = rand() % (int)std::pow(10, maxDigitsAddition);
-                number2 = rand() % (int)std::pow(10, maxDigitsAddition);
+                // number1 = rand() % (int)std::pow(10, maxDigitsAddition);
+                // number2 = rand() % (int)std::pow(10, maxDigitsAddition);
                 maxDigits = maxDigitsAddition;
-                answer = number1 + number2;
-                questionToAsk = "Resolve the following: " + std::to_string(number1) + " + " + std::to_string(number2);
+                operation = generateAddition(maxDigitsAddition);
+                // answer = number1 + number2;
+                // questionToAsk = "Resolve the following: " + std::to_string(number1) + " + " + std::to_string(number2);
+                break;
             case(3): // Subtraction
-                number1 = rand() % (int)std::pow(10, maxDigitsSubtraction);
-                number2 = rand() % (int)std::pow(10, maxDigitsSubtraction);
-                if(number1 < number2) {
-                    int temp = number1;
-                    number1 = number2;
-                    number2 = temp;
-                } // ensures the result is a positive number
+                // number1 = rand() % (int)std::pow(10, maxDigitsSubtraction);
+                // number2 = rand() % (int)std::pow(10, maxDigitsSubtraction);
+                // if(number1 < number2) {
+                //     int temp = number1;
+                //     number1 = number2;
+                //     number2 = temp;
+                // } // ensures the result is a positive number
                 maxDigits = maxDigitsSubtraction;
-                answer = number1 - number2;
-                questionToAsk = "Resolve the following: " + std::to_string(number1) + " + " + std::to_string(number2);
+                operation = generateSubtraction(maxDigitsSubtraction);
+                // answer = number1 - number2;
+                // questionToAsk = "Resolve the following: " + std::to_string(number1) + " + " + std::to_string(number2);
+                break;
         }
+        questionToAsk = "Resolve the following: " + std::to_string(operation.number1) + " " + operation.fetchNotation() + " " + std::to_string(operation.number2);
         answers.push_back(std::to_string(answer));
 
         for(int j = 0; j < TOTAL_QUESTIONS - 1; j++) {
