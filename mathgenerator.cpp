@@ -16,7 +16,7 @@ struct questions {
         this->answers.push_back(answers);
     }
 
-    void addQuestion(std::string question, std::vector<std::string> answers) { // TODO: Verify this way of copying the vectors doesn't cause a segfault or undefined behavior
+    void addQuestion(std::string question, std::vector<std::string> answers) { // NOTE: Verify this way of copying the vectors doesn't cause a segfault or undefined behavior
         this->questionsAsked.push_back(question);
         this->answers.push_back(answers);
     }
