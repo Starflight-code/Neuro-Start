@@ -21,10 +21,12 @@ set(PROJECT_SOURCES
 add_executable(mathgen tests/mathgen.cpp)
 
 enable_testing()
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
 add_test(multiplicationGen mathgen 0)
 add_test(divisionGen mathgen 1)
 add_test(additionGen mathgen 2)
 add_test(subtractionGen mathgen 3)
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Neuro-Start
