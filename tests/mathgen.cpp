@@ -1,13 +1,15 @@
-#include "../mathgenerator.cpp"
+#include "../mathgenerator.hpp"
+#include <cmath>
+#include <cstdio>
 #include <cstdlib>
 
 int main(int argc, char** argv) {
-    mathOperation operation = mathOperation();
+    mathGenerator::mathOperation operation = mathGenerator::mathOperation();
     int exitcode = 0;
     switch(atoi(argv[1])) {
         case 0: // Multiplication
             for(int i = 1; i < 10; i++) {
-                operation = generateMultiplication(i);
+                operation = mathGenerator::generateMultiplication(i);
                 if(operation.number1 > pow(10, i) || operation.number2 > pow(10, i)) {
                     printf("Number1: %d Number2: %d greater than %d digits\n", operation.number1, operation.number2, i);
                     exitcode = 1;
@@ -20,7 +22,7 @@ int main(int argc, char** argv) {
             break;
         case 1: // Division
             for(int i = 1; i < 10; i++) {
-                operation = generateDivision(i);
+                operation = mathGenerator::generateDivision(i);
                 if(operation.number1 > pow(10, i) || operation.number2 > pow(10, i)) {
                     printf("Number1: %d or Number2: %d greater than %d digits\n", operation.number1, operation.number2, i);
                     exitcode = 1;
@@ -37,7 +39,7 @@ int main(int argc, char** argv) {
             break;
         case 2: // Addition
             for(int i = 1; i < 10; i++) {
-                operation = generateAddition(i);
+                operation = mathGenerator::generateAddition(i);
                 if(operation.number1 > pow(10, i) || operation.number2 > pow(10, i)) {
                     printf("Number1: %d or Number2: %d greater than %d digits\n", operation.number1, operation.number2, i);
                     exitcode = 1;
@@ -50,7 +52,7 @@ int main(int argc, char** argv) {
             break;
         case 3: // Subtraction
             for(int i = 1; i < 10; i++) {
-                operation = generateSubtraction(i);
+                operation = mathGenerator::generateSubtraction(i);
                 if(operation.number1 > pow(10, i) || operation.number2 > pow(10, i)) {
                     printf("Number1: %d or Number2: %d greater than %d digits\n", operation.number1, operation.number2, i);
                     exitcode = 1;

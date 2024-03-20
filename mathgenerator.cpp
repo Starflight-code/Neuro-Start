@@ -1,3 +1,4 @@
+#include "mathgenerator.hpp"
 #include <cmath>
 #include <cstdlib>
 #include <string>
@@ -5,62 +6,11 @@
 
 const int TOTAL_QUESTIONS = 4;
 
-struct questions {
-    std::vector<std::string> questionsAsked;
-    std::vector<std::vector<std::string>> answers;
-
-    questions() {}
-
-    questions(std::vector<std::string> question, std::vector<std::string> answers) {
-        this->questionsAsked = question;
-        this->answers.push_back(answers);
-    }
-
-    void addQuestion(std::string question, std::vector<std::string> answers) { // NOTE: Verify this way of copying the vectors doesn't cause a segfault or undefined behavior
-        this->questionsAsked.push_back(question);
-        this->answers.push_back(answers);
-    }
-};
-
 enum mathOperator {
     multiplication,
     division,
     addition,
     subtraction
-};
-
-struct mathOperation {
-    int number1;
-    int number2;
-    int answer;
-    mathOperator operation;
-
-    mathOperation() {
-        number1 = 0;
-        number2 = 0;
-        answer = 0;
-        operation = multiplication;
-    }
-    mathOperation(int number1, int number2, int answer, mathOperator operation) {
-        this->number1 = number1;
-        this->number2 = number2;
-        this->answer = answer;
-        this->operation = operation;
-    }
-
-    char fetchNotation() {
-        switch(operation) {
-            case multiplication:
-                return '*';
-            case division:
-                return '/';
-            case addition:
-                return '+';
-            case subtraction:
-                return '-';
-        }
-        return '?';
-    }
 };
 
 enum difficulty {
@@ -70,14 +20,14 @@ enum difficulty {
     extreme
 };
 
-mathOperation generateMultiplication(int maxDigits) {
+mathGenerator::mathOperation mathGenerator::generateMultiplication(int maxDigits) {
     int number1 = rand() % (int)std::pow(10, maxDigits);
     int number2 = rand() % (int)std::pow(10, maxDigits);
     int answer = number1 * number2;
     return mathOperation(number1, number2, answer, multiplication);
 }
 
-mathOperation generateDivision(int maxDigits) {
+mathGenerator::mathOperation mathGenerator::generateDivision(int maxDigits) {
     int number1 = rand() % (int)std::pow(10, maxDigits);
     int number2 = (rand() + 1) % (int)std::pow(10, maxDigits == 1 ? 1 : maxDigits - 1); // ensures number 2 is a smaller number from number1
     number1 -= number1 % number2;                                                       // ensures a integer results from division
@@ -85,14 +35,14 @@ mathOperation generateDivision(int maxDigits) {
     return mathOperation(number1, number2, answer, division);
 }
 
-mathOperation generateAddition(int maxDigits) {
+mathGenerator::mathOperation mathGenerator::generateAddition(int maxDigits) {
     int number1 = rand() % (int)std::pow(10, maxDigits);
     int number2 = rand() % (int)std::pow(10, maxDigits);
     int answer = number1 + number2;
     return mathOperation(number1, number2, answer, addition);
 }
 
-mathOperation generateSubtraction(int maxDigits) {
+mathGenerator::mathOperation mathGenerator::generateSubtraction(int maxDigits) {
     int number1 = rand() % (int)std::pow(10, maxDigits);
     int number2 = rand() % (int)std::pow(10, maxDigits);
     if(number1 < number2) {
@@ -104,7 +54,7 @@ mathOperation generateSubtraction(int maxDigits) {
     return mathOperation(number1, number2, answer, subtraction);
 }
 
-questions generateQuestion(difficulty level) {
+mathGenerator::questions mathGenerator::generateQuestion(difficulty level) {
     int maxDigitsMultiplication;
     int maxDigitsDivision;
     int maxDigitsAddition;
