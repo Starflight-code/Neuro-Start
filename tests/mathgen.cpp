@@ -1,4 +1,4 @@
-#include "../mathgenerator.h"
+#include "../mathgenerator.hpp"
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>

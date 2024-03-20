@@ -40,6 +40,7 @@ else()
     else()
         add_executable(Neuro-Start
             ${PROJECT_SOURCES}
+            mathquestioneer.h mathquestioneer.cpp mathquestioneer.ui
         )
     endif()
 endif()

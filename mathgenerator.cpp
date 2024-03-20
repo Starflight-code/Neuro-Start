@@ -1,10 +1,9 @@
-#include "mathgenerator.h"
+#include "mathgenerator.hpp"
 #include <cmath>
 #include <cstdlib>
+#include <ctime>
 #include <string>
 #include <vector>
-
-#pragma once
 
 const int TOTAL_QUESTIONS = 4;
 
@@ -57,6 +56,7 @@ mathGenerator::mathOperation mathGenerator::generateSubtraction(int maxDigits) {
 }
 
 mathGenerator::questions mathGenerator::generateQuestion(difficulty level) {
+    srand(time(0));
     int maxDigitsMultiplication;
     int maxDigitsDivision;
     int maxDigitsAddition;
@@ -97,60 +97,35 @@ mathGenerator::questions mathGenerator::generateQuestion(difficulty level) {
     std::vector<std::string> answers = std::vector<std::string>();
     questions returnValue = questions();
 
-    int numberOfOperations = maxOperations != 0 ? rand() % (maxOperations - 1) + 1 : 1; // sets the number of operations to generate to between 1 and max operations.
+    int numberOfOperations = maxOperations > 1 ? rand() % (maxOperations + 1) : 1; // sets the number of operations to generate to between 1 and max operations.
     for(int i = 0; i < numberOfOperations; i++) {
         mathOperation operation = mathOperation();
-        int number1;
-        int number2;
-        int answer;
         int maxDigits;
 
         switch(rand() % 4) {
             case(0): // Multiplication
-
-                // number1 = rand() % (int)std::pow(10, maxDigitsMultiplication);
-                // number2 = rand() % (int)std::pow(10, maxDigitsMultiplication);
                 maxDigits = maxDigitsMultiplication;
-                // answer = number1 * number2;
                 operation = generateMultiplication(maxDigitsMultiplication);
                 break;
             case(1): // Division
-                // number1 = rand() % (int)std::pow(10, maxDigitsDivision);
-                // number2 = (rand() + 1) % (int)std::pow(10, maxDigitsDivision == 1 ? 1 : maxDigitsDivision - 1); // ensures number 2 is a smaller number from number1
-                // number1 -= number1 % number2;                                                                   // ensures a integer results from division
                 maxDigits = maxDigitsDivision;
                 operation = generateDivision(maxDigitsDivision);
-                // answer = number1 / number2;
-                // questionToAsk = "Resolve the following: " + std::to_string(number1) + " / " + std::to_string(number2);
                 break;
             case(2): // Addition
-                // number1 = rand() % (int)std::pow(10, maxDigitsAddition);
-                // number2 = rand() % (int)std::pow(10, maxDigitsAddition);
                 maxDigits = maxDigitsAddition;
                 operation = generateAddition(maxDigitsAddition);
-                // answer = number1 + number2;
-                // questionToAsk = "Resolve the following: " + std::to_string(number1) + " + " + std::to_string(number2);
                 break;
             case(3): // Subtraction
-                // number1 = rand() % (int)std::pow(10, maxDigitsSubtraction);
-                // number2 = rand() % (int)std::pow(10, maxDigitsSubtraction);
-                // if(number1 < number2) {
-                //     int temp = number1;
-                //     number1 = number2;
-                //     number2 = temp;
-                // } // ensures the result is a positive number
                 maxDigits = maxDigitsSubtraction;
                 operation = generateSubtraction(maxDigitsSubtraction);
-                // answer = number1 - number2;
-                // questionToAsk = "Resolve the following: " + std::to_string(number1) + " + " + std::to_string(number2);
                 break;
         }
         questionToAsk = "Resolve the following: " + std::to_string(operation.number1) + " " + operation.fetchNotation() + " " + std::to_string(operation.number2);
-        answers.push_back(std::to_string(answer));
+        answers.push_back(std::to_string(operation.answer));
 
         for(int j = 0; j < TOTAL_QUESTIONS - 1; j++) {
-            int randomAnswer = (answer + (rand() % (int)std::pow(10, maxDigits))) % (int)std::pow(10, maxDigits); // generates a randomized alternative (wrong) answer for the user to not select after solving
-            answers.push_back(std::to_string(randomAnswer == answer ? ++randomAnswer : randomAnswer));            // verifies the wrong answer is not correct, if this edge case occurs then add one (making it rightfully wrong)
+            int randomAnswer = (operation.answer + (rand() % (int)std::pow(10, maxDigits))) % (int)std::pow(10, maxDigits); // generates a randomized alternative (wrong) answer for the user to not select after solving
+            answers.push_back(std::to_string(randomAnswer == operation.answer ? ++randomAnswer : randomAnswer));            // verifies the wrong answer is not correct, if this edge case occurs then add one (making it rightfully wrong)
         }
         returnValue.addQuestion(questionToAsk, answers);
         answers.clear();
