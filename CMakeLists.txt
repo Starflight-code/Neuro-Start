@@ -17,6 +17,8 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        mathgenerator.cpp
+        mathgenerator.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -38,6 +40,7 @@ else()
     else()
         add_executable(Neuro-Start
             ${PROJECT_SOURCES}
+            mathquestioneer.h mathquestioneer.cpp mathquestioneer.ui
         )
     endif()
 endif()
@@ -68,3 +71,15 @@ install(TARGETS Neuro-Start
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(Neuro-Start)
 endif()
+
+add_executable(mathgen tests/mathgen.cpp
+mathgenerator.cpp
+mathgenerator.hpp
+)
+
+enable_testing()
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
+add_test(multiplicationGen mathgen 0)
+add_test(divisionGen mathgen 1)
+add_test(additionGen mathgen 2)
+add_test(subtractionGen mathgen 3)
