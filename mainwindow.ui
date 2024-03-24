@@ -17,14 +17,37 @@
    <widget class="QPushButton" name="mathStart">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>20</x>
       <y>160</y>
-      <width>80</width>
-      <height>26</height>
+      <width>381</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
      <string>Math</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="routineStart">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>761</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Daily Routine</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="difficultySelector">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>490</y>
+      <width>361</width>
+      <height>51</height>
+     </rect>
     </property>
    </widget>
   </widget>
