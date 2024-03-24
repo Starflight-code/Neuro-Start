@@ -29,11 +29,16 @@ public:
         }
     };
 
-    enum mathOperator {
-        multiplication,
-        division,
-        addition,
-        subtraction
+    enum mathOperator { // 29 x 92 / 29 / 3
+                        // List<int> = 29 92 29 3
+                        // List<mathOperator> = multiplication division division
+                        // 1: division or multiplication 2: addition or subtraction // MD - AS
+                        // List<mathOperators> x
+                        // for (x) -> list<int>[i] = x[i] == multi || x[i] div + x[i] == add || x[i] sub // sdasfa
+        multiplication = 0,
+        division = 1,
+        addition = 2,
+        subtraction = 3
     };
 
     struct mathOperation {
@@ -55,6 +60,7 @@ public:
             this->operation = operation;
         }
 
+    public:
         char fetchNotation() {
             switch(operation) {
                 case multiplication:
@@ -65,8 +71,30 @@ public:
                     return '+';
                 case subtraction:
                     return '-';
+                default:
+                    return '?';
             }
-            return '?';
+        }
+    };
+
+    struct equation {
+    public:
+        std::vector<int> numbers;
+        std::vector<mathOperator> operators;
+        int answer;
+        std::string viewableEquation;
+
+        equation() {
+            this->numbers = std::vector<int>();
+            this->operators = std::vector<mathOperator>();
+            answer = 0;
+            viewableEquation = "";
+        }
+        equation(std::vector<int> numbers, std::vector<mathOperator> operators, int answer, std::string viewableEquation) {
+            this->numbers = numbers;
+            this->operators = operators;
+            this->answer = answer;
+            this->viewableEquation = viewableEquation;
         }
     };
 
@@ -80,7 +108,10 @@ public:
     static mathOperation generateDivision(int maxDigits);
     static mathOperation generateAddition(int maxDigits);
     static mathOperation generateSubtraction(int maxDigits);
-    static questions generateQuestion(difficulty level);
+    static equation generateAlgebra(difficulty level);
+    static int generateNumber(int maxDigits);
+    static char fetchNotation(mathOperator operation);
+    static questions generateQuestion(difficulty level, bool isAlgebra);
 };
 
 // #endif

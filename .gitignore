@@ -76,3 +76,6 @@ CMakeLists.txt.user*
 .cache/*
 .vscode/*
 build/*
+CMakeFiles/*
+*.cmake
+CMakeCache.txt

@@ -29,7 +29,8 @@ void MathQuestioneer::start() {
         randomIndexes[i] = -1;
     }
 
-    nextUp = mathGenerator::generateQuestion(mathGenerator::difficulty::moderate);
+    nextUp = mathGenerator::generateQuestion(mathGenerator::difficulty::difficult, true);
+
     questionIndex = 0;
     next();
 }
