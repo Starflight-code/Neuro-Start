@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -33,6 +34,37 @@ mathGenerator::mathOperation mathGenerator::generateDivision(int maxDigits) {
     int number2 = rand() % (int)std::pow(10, maxDigits == 1 ? 1 : maxDigits - 1); // ensures number 2 is a smaller number from number1
     number2 = number2 == 0 ? 1 : number2;
     number1 -= number1 % number2; // ensures a integer results from division
+    number1 = number1 == 0 ? number2 : number1;
+    int answer = number1 / number2;
+    return mathOperation(number1, number2, answer, division);
+}
+
+mathGenerator::mathOperation mathGenerator::generateDivisionWithNumerator(int numerator) {
+    int primes[] = {1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+    int number1 = numerator;
+    int maxDigits = findNumberOfDigits(numerator);
+    int number2 = rand() % (int)std::pow(10, maxDigits == 0 ? 1 : maxDigits - 1); // ensures number 2 is a smaller number from number1
+    number2 = number2 == 0 ? 1 : number2;
+    // number1 -= number1 % number2; // ensures a integer results from division
+    /*
+    25 / 4 -> 6.25
+    25 / (4 (25 % 4) = 5) = 5
+
+
+
+    */
+    int highestPrimeFactor;
+    for(int i = 9; i >= 0; i--) {
+        if(number1 % primes[i] == 0) {
+            highestPrimeFactor = primes[i];
+            break;
+        }
+    }
+    if(highestPrimeFactor == 1) {
+        number2 = 1;
+    } else {
+        number2 -= number2 % highestPrimeFactor == number2 ? number2 % highestPrimeFactor - highestPrimeFactor : number2 % highestPrimeFactor; // 28 / 7 | 19 % 7 = 5 = 19 - 5 = 14 | 28/14.....
+    }
     int answer = number1 / number2;
     return mathOperation(number1, number2, answer, division);
 }
@@ -79,25 +111,31 @@ char mathGenerator::fetchNotation(mathOperator operation) {
     }
 };
 
+int mathGenerator::findNumberOfDigits(int answer) {
+    bool isNonNegative = answer < 0 ? false : true; // if answer is negative, then isPositive = false. Otherwise true.
+    answer = answer == 0 ? 1 : answer;
+    int numberOfDigits = (int)std::ceil(std::log10(abs(answer)));
+    return numberOfDigits * (isNonNegative * 2 - 1);
+}
+
+void mathGenerator::generateRandomAnswers(std::vector<std::string>* answers, int answer, int numberOfQuestions, int numberOfDigits) {
+    for(int i = 0; i < numberOfDigits; i++) {
+        int randomAnswer = generateNumber(numberOfDigits);
+        answers->push_back(std::to_string(randomAnswer == answer ? ++randomAnswer : randomAnswer));
+    }
+}
+
 mathGenerator::questions mathGenerator::generateQuestion(difficulty level, bool isAlgebra) {
     srand(time(0));
     if(isAlgebra) {
         equation algebra = generateAlgebra(level);
         std::vector<std::string> answers = std::vector<std::string>();
-        int numberOfDigits;
-        short carryNegative = 0;
-        if(algebra.answer < 0) {
-            numberOfDigits = (int)std::ceil(std::log10(algebra.answer == 0 ? 1 : -1 * algebra.answer));
-            carryNegative = -1;
-        } else {
-            numberOfDigits = (int)std::ceil(std::log10(algebra.answer == 0 ? 1 : algebra.answer)); // 10 ^ 4.2 = 20549 // 10 ^ 4 = 10000 10 ^ 5 = 100000 5
-            carryNegative = 1;
-        }
+
+        int numberOfDigits = findNumberOfDigits(algebra.answer);
+
         answers.push_back(std::to_string(algebra.answer));
-        for(int j = 0; j < TOTAL_QUESTIONS - 1; j++) {
-            int randomAnswer = generateNumber(numberOfDigits * carryNegative);                                 // generates a randomized alternative (wrong) answer for the user to not select after solving
-            answers.push_back(std::to_string(randomAnswer == algebra.answer ? ++randomAnswer : randomAnswer)); // verifies the wrong answer is not correct, if this edge case occurs then add one (making it rightfully wrong)
-        }
+        mathGenerator::generateRandomAnswers(&answers, algebra.answer, TOTAL_QUESTIONS - 1, numberOfDigits);
+
         questions returnValue = questions();
         returnValue.addQuestion(algebra.viewableEquation, answers);
         return returnValue;
@@ -143,8 +181,11 @@ mathGenerator::questions mathGenerator::generateQuestion(difficulty level, bool 
         std::vector<std::string> answers = std::vector<std::string>();
         questions returnValue = questions();
 
-        int numberOfOperations = rand() % (maxOperations + 1); // sets the number of operations to generate to between 1 and max operations.
+        std::mt19937 gen(time(0));
+
+        int numberOfOperations = gen() % (maxOperations + 1); // sets the number of operations to generate to between 1 and max operations.
         numberOfOperations = numberOfOperations == 0 ? 1 : numberOfOperations;
+        numberOfOperations = (maxOperations + 1) - numberOfOperations;
         for(int i = 0; i < numberOfOperations; i++) {
             mathOperation operation = mathOperation();
             int maxDigits;
@@ -216,11 +257,7 @@ mathGenerator::equation mathGenerator::generateAlgebra(difficulty level) {
             maxOperations = 4;
             break;
     }
-    // 0-230942
-    // 0 - maxOperations (inclusive) maxoperations: 4 // 1,2,3,4
-    // rand() % 4 + 1 (5) - > 9/5 = 4
 
-    // maxOperations = 2
     int operations = rand() % (maxOperations + 1);
     operations = operations == 0 ? 1 : operations;
     int operatorCount[4] = {0, 0, 0, 0}; // count of each operator in mathOperators
@@ -250,15 +287,23 @@ mathGenerator::equation mathGenerator::generateAlgebra(difficulty level) {
         }
     }
     int numberOfDivisionsFound = 0;
+    int divisionAnswers[numbersInProblem.size() - 1];
     for(int i = 0; i < mathOperators.size(); i++) {
         if(numberOfDivisionsFound >= operatorCount[1]) { // break if we found all the division operators
             break;
+        } else {
         }
 
         if(mathOperators[i] == division) {
-            mathOperation selectedOperation = generateDivision(maxDigits[1]);
+            mathOperation selectedOperation;
+            if(i != 0 && mathOperators[i - 1] == division) {
+                selectedOperation = generateDivisionWithNumerator(divisionAnswers[i - 1]);
+            } else {
+                selectedOperation = generateDivision(maxDigits[1]); // TODO: sometimes outputs a zero as numerator, triggering 0 outputs on generateDivisionWithNumerator
+            }
             numbersInProblem[i] = selectedOperation.number1;
             numbersInProblem[i + 1] = selectedOperation.number2;
+            divisionAnswers[i] = numbersInProblem[i] / numbersInProblem[i + 1];
             numberOfDivisionsFound++;
         }
     }
@@ -276,18 +321,13 @@ mathGenerator::equation mathGenerator::generateAlgebra(difficulty level) {
             viewableEquation += " ";
         }
     }
-    // 20 * 21 / 2 + 11 - 2 / 1
-    // 210 / 2 + 11 - 2 / 1
-    // 20 * 21 = 420 / 2 = 210
-    // 210 + 11 - 2
-    // 210 + 11 = 221 - 2 = 219
     std::vector<int> numbersForCalc = numbersInProblem;
     std::vector<mathOperator> operatorsForCalc = mathOperators;
 
     for(int i = 0; i < operatorsForCalc.size(); i++) {
         if(operatorsForCalc[i] == multiplication) {
             numbersForCalc[i] = numbersForCalc[i] * numbersForCalc[i + 1];
-            numbersForCalc.erase(numbersForCalc.begin() + i + 1); // TODO: Verify this remove the indexed value instead of setting the content to null or something
+            numbersForCalc.erase(numbersForCalc.begin() + i + 1);
             operatorsForCalc.erase(operatorsForCalc.begin() + i);
             i--;
         } else if(operatorsForCalc[i] == division) {
@@ -301,7 +341,7 @@ mathGenerator::equation mathGenerator::generateAlgebra(difficulty level) {
     for(int i = 0; i < operatorsForCalc.size(); i++) {
         if(operatorsForCalc[i] == addition) {
             numbersForCalc[i] = numbersForCalc[i] + numbersForCalc[i + 1];
-            numbersForCalc.erase(numbersForCalc.begin() + i + 1); // TODO: Verify this remove the indexed value instead of setting the content to null or something
+            numbersForCalc.erase(numbersForCalc.begin() + i + 1);
             operatorsForCalc.erase(operatorsForCalc.begin() + i);
             i--;
         } else if(operatorsForCalc[i] == subtraction) {

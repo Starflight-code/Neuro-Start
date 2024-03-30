@@ -106,9 +106,12 @@ public:
     };
     static mathOperation generateMultiplication(int maxDigits);
     static mathOperation generateDivision(int maxDigits);
+    static mathOperation generateDivisionWithNumerator(int numerator);
     static mathOperation generateAddition(int maxDigits);
     static mathOperation generateSubtraction(int maxDigits);
     static equation generateAlgebra(difficulty level);
+    static int findNumberOfDigits(int answer);
+    static void generateRandomAnswers(std::vector<std::string>* answers, int answer, int numberOfQuestions, int numberOfDigits);
     static int generateNumber(int maxDigits);
     static char fetchNotation(mathOperator operation);
     static questions generateQuestion(difficulty level, bool isAlgebra);
